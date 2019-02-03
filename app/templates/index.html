@@ -5,12 +5,18 @@
   <meta charset="utf-8">
   <title>Scrolling</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
   <script type="text/javascript" charset="utf-8">
       var socket = io.connect('http://' + document.domain + ':' + location.port);
       socket.on('connect', function() {
-          socket.emit('my event', {data: 'I\'m connected!'});
+          $('body').append("connected<br\>");
       });
+
+      socket.on('my response', function(msg) {
+          $('body').append("my response: " + msg + "<br\>");
+      });
+
   </script>
 </head>
 <body>

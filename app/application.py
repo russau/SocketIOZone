@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 
+import Scroller
 from threading import Lock
 import time
 
@@ -10,12 +11,17 @@ socketio = SocketIO(application)
 thread = None
 thread_lock = Lock()
 
+def squaresEmitter(squares):
+    # print(squares)
+    socketio.emit('my response', squares)
+
 def background_thread():
     print("starting thread")
+    s = Scroller.Scroller(squaresEmitter)
+    s.scrollText("Snorlax!!", socketio, 0, 255, 0)
     while True:
-        print("emitting from thread")
-        socketio.emit('my response', 'from thread')
-        socketio.sleep(4)
+        print("banana")
+        s.scrollText("Banana   ", socketio, 0, 0, 255)
 
 @application.route('/')
 def index():
@@ -24,7 +30,6 @@ def index():
 @socketio.on('connect')
 def test_connect():
     print('Client connected')
-    socketio.emit('my response', 'from connect')
     global thread
     with thread_lock:
         if thread is None:
@@ -34,11 +39,5 @@ def test_connect():
 def test_disconnect():
     print('Client disconnected')
 
-@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)
-
-
-
 if __name__ == '__main__':
-    socketio.run(application, debug=False)
+    socketio.run(application, debug=True)
